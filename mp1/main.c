@@ -45,7 +45,7 @@ int main () {
         exit(2);
     }
 
-    printf("Prosess %d er knyttet til port %d.\n", getpid(), PORT);
+    printf("Process %d is connected to port %d.\n", getpid(), PORT);
 
     // Listen to server socket
     listen(server_socket_fd, BACKLOG);
