@@ -14,6 +14,7 @@ int main () {
     int sockoptstatus;
     int enable = 1;
     struct sockaddr_in  server_address;
+    char *file_path;
     char http_response[1024];
     FILE *asis;
 
@@ -22,7 +23,7 @@ int main () {
 
     if (server_socket_fd < 0) {
         perror("Error creating socket");
-       exit(0) ;
+        exit(0) ;
     }
 
     /* Allow port re-use */
@@ -33,16 +34,16 @@ int main () {
     }
 
     // Initialize server address
-    server_address.sin_family      = AF_INET;
-    server_address.sin_port        = htons((u_short)PORT);
-    server_address.sin_addr.s_addr = htonl(         INADDR_ANY);
+    server_address.sin_family = AF_INET;
+    server_address.sin_port = htons(PORT);
+    server_address.sin_addr.s_addr = INADDR_ANY;
 
     // Bind socket with server address
     bindstatus = bind(server_socket_fd, (struct sockaddr *)&server_address, sizeof(server_address));
 
     if (bindstatus < 0) {
         perror("Bind failed");
-        exit(2);
+        exit(1);
     }
 
     printf("Process %d is connected to port %d.\n", getpid(), PORT);
@@ -59,7 +60,9 @@ int main () {
 
             dup2(client_socket_fd, 1); // Client socket is now STDOUT
 
-            printf("%s", http_response);
+            strtok(http_response, " ");
+            file_path = strtok(NULL, " ");
+            printf("%s\n", file_path);
 
             // Close client socket for read / write
             shutdown(client_socket_fd, SHUT_RDWR);
