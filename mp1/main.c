@@ -3,9 +3,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
 
 #define PORT 8080
 #define BACKLOG 10 // Request que size
+
 
 int main () {
     int server_socket_fd;
@@ -16,7 +18,18 @@ int main () {
     struct sockaddr_in  server_address;
     char *file_path;
     char http_response[1024];
-    FILE *asis;
+    char asis_file_line[BUFSIZ];
+    FILE *asisFp;
+    int error_log_fd;
+    mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+
+    error_log_fd = (open("error.log", O_RDWR | O_CREAT, mode));
+
+    if (error_log_fd < 0) {
+        perror("Log file not found");
+    } else {
+        dup2(error_log_fd, 2);
+    }
 
     /* Create socket */
     server_socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -62,7 +75,21 @@ int main () {
 
             strtok(http_response, " ");
             file_path = strtok(NULL, " ");
-            printf("%s\n", file_path);
+            asisFp = fopen(file_path, "r");
+
+            if (asisFp == NULL) {
+                printf("HTTP/1.1 400 Bad Request\n");
+                printf("\n");
+                printf("File not found!\n");
+            } else {
+                while (fgets(asis_file_line, BUFSIZ, asisFp) != NULL) {
+                    printf("%s", asis_file_line);
+                }
+            }
+
+            fclose(asisFp);
+            close(error_log_fd);
+            fflush(stdout);
 
             // Close client socket for read / write
             shutdown(client_socket_fd, SHUT_RDWR);
