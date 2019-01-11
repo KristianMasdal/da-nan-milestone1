@@ -1,0 +1,3 @@
+/home/kristian/CLionProjects/da-nan-milestone1/mp1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/kristian/CLionProjects/da-nan-milestone1/mp1/cmake-build-debug/CMakeFiles/mp1.dir
+/home/kristian/CLionProjects/da-nan-milestone1/mp1/cmake-build-debug/CMakeFiles/edit_cache.dir
